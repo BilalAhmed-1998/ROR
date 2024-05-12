@@ -1,0 +1,34 @@
+<h1 class="mb-4">Editing Group</h1>
+
+<div>
+  <%= link_to "Show this group", @group, class: 'btn btn-info mr-2' %> |
+  <%= link_to "Back to groups", groups_path, class: 'btn btn-secondary' %>
+</div>
+
+<%= render "form", group: @group %>
+
+
+<div class="input-group">
+  <%= form_with(model: UserGroupAssociation.new, url: add_user_to_group_group_path(@group), method: :post, local: true, class: 'd-flex mt-2') do |form| %>
+    <%= form.collection_select :user_id, User.where.not(id: @group.user_ids), :id, :full_name, {}, class: 'custom-select form-select' %>
+    <div class="input-group-append">
+      <%= form.submit "Add User", class: 'btn btn-success', style: 'margin-left: 10px;' %>
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-4">
+  <h2>Modify User Roles:</h2>
+  <ul class="list-group">
+    <% @group.users.each do |user| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <%= user.full_name %>
+        <div class="btn-group">
+          <%= link_to "Organizer", update_user_role_group_path(@group, user, role: 'organizer'), method: :patch, class: user_current_role_class(user, 'organizer') %>
+          <%= link_to "Presenter", update_user_role_group_path(@group, user, role: 'presenter'), method: :patch, class: user_current_role_class(user, 'presenter') %>
+          <%= link_to "Participant", update_user_role_group_path(@group, user, role: 'participant'), method: :patch, class: user_current_role_class(user, 'participant') %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</div>

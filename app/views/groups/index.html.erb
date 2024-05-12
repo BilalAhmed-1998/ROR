@@ -1,0 +1,65 @@
+<%= link_to "New Group", new_group_path, class: 'btn btn-primary mb-2' %>
+
+<%= form_tag(import_users_path, multipart: true, class: 'mb-3') do %>
+  <div class="input-group">
+    <%= file_field_tag 'csv_file', accept: '.csv', class: 'form-control' %>
+    <div class="input-group-append">
+      <%= submit_tag 'Upload CSV', class: 'btn btn-primary' %>
+    </div>
+  </div>
+  <div id="csv-file-error" class="text-danger" style="display: none;">
+    Please select a CSV file to upload.
+  </div>
+<% end %>
+
+<h1>Groups</h1>
+
+<div id="groups">
+  <table class="table table-bordered">
+    <thead class="thead-dark">
+      <tr>
+        <th>Name</th>
+        <th>Organizers</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @groups.each do |group| %>
+        <tr>
+          <td><%= group.name %></td>
+          <td><%= group.organizers.map { |ua| ua.user.full_name }.join(', ') %></td>
+          <td class='d-flex'>
+            <%= link_to "Show", group, class: 'btn btn-info btn-sm m-1' %>
+            <%= link_to "Edit", edit_group_path(group), class: 'btn btn-warning btn-sm m-1' %>
+            <%= button_to "Destroy", group, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm m-1' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const fileInput = form.querySelector('input[type="file"]');
+    const errorDiv = document.getElementById('csv-file-error');
+    const uploadButton = form.querySelector('input[type="submit"]');
+
+    form.addEventListener('submit', function(event) {
+      if (!fileInput.files.length) {
+        event.preventDefault();
+        errorDiv.style.display = 'block';
+      } else {
+        errorDiv.style.display = 'none';
+      }
+    });
+
+    fileInput.addEventListener('change', function() {
+      errorDiv.style.display = 'none';
+      uploadButton.disabled = false;
+    });
+  });
+</script>
+
+
